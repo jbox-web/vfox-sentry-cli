@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Run plugin tests - install and execute tool"
+set -euo pipefail
+
+mise plugin link --force sentry-cli .
+mise cache clear
+mise install sentry-cli@3.3.3
+
+# Capture and display the output while also verifying it
+output=$(mise exec "sentry-cli@3.3.3" -- "sentry-cli" --version)
+echo "sentry-cli output: ${output}"
+
+if echo "${output}" | grep -q '3.3.3'; then
+  echo "✓ Tests passed"
+else
+  echo "✗ Test failed: expected version sentry-cli@3.3.3"
+  exit 1
+fi
